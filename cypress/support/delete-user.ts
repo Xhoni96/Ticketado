@@ -3,10 +3,13 @@
 // npx ts-node --require tsconfig-paths/register ./cypress/support/delete-user.ts username@example.com
 // and that user will get deleted
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { installGlobals } from "@remix-run/node";
 
-import { prisma } from "~/db.server";
+import { createClient } from "edgedb";
+
+import e from "../../dbschema/edgeql-js";
+
+const client = createClient();
 
 installGlobals();
 
@@ -19,18 +22,17 @@ async function deleteUser(email: string) {
   }
 
   try {
-    await prisma.user.delete({ where: { email } });
+    const res = await e
+      .delete(e.User, () => ({
+        filter_single: { email },
+      }))
+      .run(client);
+
+    if (!res?.id) throw "User not found, so no need to delete";
   } catch (error) {
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
-      console.log("User not found, so no need to delete");
-    } else {
-      throw error;
-    }
+    console.log(error);
   } finally {
-    await prisma.$disconnect();
+    client.close();
   }
 }
 
