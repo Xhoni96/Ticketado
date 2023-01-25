@@ -1,13 +1,15 @@
 import { createClient } from "edgedb";
 import bcrypt from "bcryptjs";
-import e, { $infer } from "../dbschema/edgeql-js";
+import e from "../dbschema/edgeql-js";
 const client = createClient();
 
 async function seed() {
   const email = "root@remix.run";
   const pass = "remix+edgedb=awesome";
-  const user = e.select(e.User, (u) => ({
-    filter: e.op(u.email, "=", email),
+
+  const user = e.select(e.User, () => ({
+    email: true,
+    filter_single: { email },
   }));
 
   // cleanup the existing database

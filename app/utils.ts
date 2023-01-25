@@ -51,15 +51,14 @@ function isUser(user: any): user is User {
 export function useOptionalUser(): User | undefined {
   const data = useMatchesData("root");
 
-  if (!data || !isUser((data.user as User[])?.[0])) {
+  if (!data || !isUser(data.user)) {
     return undefined;
   }
-  return (data.user as User[])?.[0];
+  return data.user;
 }
 
 export function useUser(): User {
   const maybeUser = useOptionalUser();
-  console.log(maybeUser, "maybeUser");
 
   if (!maybeUser) {
     throw new Error(

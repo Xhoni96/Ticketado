@@ -1,21 +1,22 @@
 import bcrypt from "bcryptjs";
 
-import { e, client, $infer } from "~/db.server";
+import { e, client } from "~/db.server";
 
 export async function getUserById(id: string) {
   return await e
-    .select(e.User, (user) => ({
+    .select(e.User, () => ({
       ...e.User["*"],
-      filter: e.op(user.id, "=", e.uuid(id)),
+      filter_single: { id: e.uuid(id) },
     }))
     .run(client);
 }
 
 export async function getUserByEmail(email: string) {
   return await e
-    .select(e.User, (user) => ({
+    .select(e.User, () => ({
       ...e.User["*"],
-      filter: e.op(user.email, "=", email),
+      // filter_single: e.op(user.email, "=", email),
+      filter_single: { email },
     }))
     .run(client);
 }
@@ -48,27 +49,26 @@ export async function deleteUserByEmail(email: string) {
 }
 
 export async function verifyLogin(email: string, password: string) {
-  const userQuery = e.select(e.User, (user) => ({
+  const userQuery = e.select(e.User, () => ({
     ...e.User["*"],
     password: {
       ...e.Password["*"],
     },
-    filter: e.op(user.email, "=", email),
+    // filter_single tells that you expect just 1 result
+    filter_single: { email },
   }));
-  const users = await userQuery.run(client);
-  const user = users[0];
-  console.log(user, "user");
+
+  const user = await userQuery.run(client);
 
   if (!user?.password) {
     return null;
   }
 
-  // const isValid = await bcrypt.compare(password, user[0].password.hash);
-  console.log(password === user.password.hash, "password");
+  const isValid = await bcrypt.compare(password, user.password.hash);
 
-  // if (!isValid) {
-  //   return null;
-  // }
+  if (!isValid) {
+    return null;
+  }
 
   const { password: _password, ...userWithoutPassword } = user;
   return userWithoutPassword;

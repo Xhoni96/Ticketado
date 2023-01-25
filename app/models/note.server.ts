@@ -1,16 +1,16 @@
-import type { $infer } from "~/db.server";
+import { Note } from "dbschema/interfaces";
 import { e, client } from "~/db.server";
 
 export function User(id: string) {
   return e.select(e.User, (user) => ({
-    filter: e.op(user.id, "=", e.uuid(id)),
+    // email: true,
+    filter_single: { id },
   }));
 }
 // const noteQuery = e.select(userNotes, (note) => ({
 //   ...e.Note["*"],
 //   filter: e.op(note.id, "=", e.uuid(params.id)),
 // }));
-type Note = any;
 
 export async function getNote(params: { id: string; userId: string }) {
   const userNotes = e.select(e.Note, (note) => ({
@@ -19,12 +19,10 @@ export async function getNote(params: { id: string; userId: string }) {
 
   const note = e.select(userNotes, (note) => ({
     ...e.Note["*"],
-    filter: e.op(note.id, "=", e.uuid(params.id)),
+    filter_single: e.op(note.id, "=", e.uuid(params.id)),
   }));
-  type Note = $infer<typeof note>;
 
-  note.run(client);
-  return note;
+  return note.run(client);
 }
 
 export async function getNoteListItems(params: { userId: string }) {
