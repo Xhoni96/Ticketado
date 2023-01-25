@@ -32,7 +32,8 @@
   "eslintIgnore": [
     "/node_modules",
     "/build",
-    "/public/build"
+    "/public/build",
+    "dbschema/edgeql-js"
   ],
   "dependencies": {
     "@remix-run/node": "^1.11.1",

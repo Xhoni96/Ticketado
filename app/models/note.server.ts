@@ -1,4 +1,4 @@
-import { Note } from "dbschema/interfaces";
+import type { Note } from "dbschema/interfaces";
 import { e, client } from "~/db.server";
 
 export function User(id: string) {
