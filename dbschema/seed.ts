@@ -26,17 +26,19 @@ async function seed() {
     })
     .run(client);
 
-  // create notes
+  // create events
   await e
     .set(
-      e.insert(e.Note, {
-        title: "My first note",
-        body: "Hello, world!",
+      e.insert(e.Event, {
+        name: "My first event",
+        description: "Hello, world!",
+        startDate: new Date(),
         user,
       }),
-      e.insert(e.Note, {
-        title: "My second note",
-        body: "Hello, world!",
+      e.insert(e.Event, {
+        name: "My second event",
+        description: "Hello, world!",
+        startDate: new Date(),
         user,
       })
     )

@@ -4,7 +4,7 @@ module default {
     required property email -> str { constraint exclusive };
     required property createdAt -> datetime { default := datetime_current() };
     link password := .<user[is Password];
-    multi link notes := .<user[is Note];
+    multi link events := .<user[is Event];
   }
 
   type Password {
@@ -15,9 +15,17 @@ module default {
     }
   }
 
-  type Note {
-    required property title -> str;
-    required property body -> str;
+  type Event {
+    required property name -> str;
+    required property startDate -> datetime;
+    property description -> str;
+    property endDate -> datetime;
+    property onSale -> bool;
+    property memberid -> int16;
+    property thumbnail -> str;
+    property draft -> bool;
+    property published -> bool;
+    property venueid -> int16;
     required property createdAt -> datetime { default := datetime_current() };
     required link user -> User {
       on target delete delete source;

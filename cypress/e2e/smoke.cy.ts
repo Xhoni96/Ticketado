@@ -21,31 +21,36 @@ describe("smoke tests", () => {
     cy.findByLabelText(/password/i).type(loginForm.password);
     cy.findByRole("button", { name: /create account/i }).click();
 
-    cy.findByRole("link", { name: /notes/i }).click();
+    cy.findByRole("link", { name: /events/i }).click();
     cy.findByRole("button", { name: /logout/i }).click();
     cy.findByRole("link", { name: /log in/i });
   });
 
-  it("should allow you to make a note", () => {
-    const testNote = {
-      title: faker.lorem.words(1),
-      body: faker.lorem.sentences(1),
+  it("should allow you to create an event", () => {
+    const testEvent = {
+      name: faker.lorem.words(1),
+      description: faker.lorem.sentences(1),
+      startDate: new Date(),
     };
     cy.login();
 
     cy.visitAndCheck("/");
 
-    cy.findByRole("link", { name: /notes/i }).click();
-    cy.findByText("No notes yet");
+    cy.findByRole("link", { name: /events/i }).click();
+    cy.findByText("No events yet");
 
-    cy.findByRole("link", { name: /\+ new note/i }).click();
+    cy.findByRole("link", { name: /\+ new event/i }).click();
 
-    cy.findByRole("textbox", { name: /title/i }).type(testNote.title);
-    cy.findByRole("textbox", { name: /body/i }).type(testNote.body);
+    cy.findByRole("textbox", { name: /title/i }).type(testEvent.name);
+    cy.findByRole("textbox", { name: /description/i }).type(
+      testEvent.description
+    );
+    // cy.findByRole("textbox", { name: /startDate/i }).type(testEvent.startDate);
+
     cy.findByRole("button", { name: /save/i }).click();
 
     cy.findByRole("button", { name: /delete/i }).click();
 
-    cy.findByText("No notes yet");
+    cy.findByText("No events yet");
   });
 });

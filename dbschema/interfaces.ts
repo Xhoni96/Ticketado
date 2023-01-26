@@ -51,19 +51,27 @@ export namespace cfg {
   }
   export interface Trust extends AuthMethod {}
 }
-export interface Note extends std.$Object {
+export interface Event extends std.$Object {
   "user": User;
-  "body": string;
   "createdAt": Date;
-  "title": string;
+  "name": string;
+  "draft"?: boolean | null;
+  "endDate"?: Date | null;
+  "memberid"?: number | null;
+  "onSale"?: boolean | null;
+  "published"?: boolean | null;
+  "startDate": Date;
+  "thumbnail"?: string | null;
+  "description"?: string | null;
+  "venueid"?: number | null;
 }
 export interface Password extends std.$Object {
   "user": User;
   "hash": string;
 }
 export interface User extends std.$Object {
-  "notes": Note[];
   "password"?: Password | null;
+  "events": Event[];
   "createdAt": Date;
   "email": string;
 }
@@ -278,7 +286,7 @@ export interface types {
     "Trust": cfg.Trust;
   };
   "default": {
-    "Note": Note;
+    "Event": Event;
     "Password": Password;
     "User": User;
   };
