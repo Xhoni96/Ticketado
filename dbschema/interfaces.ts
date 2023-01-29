@@ -53,17 +53,15 @@ export namespace cfg {
 }
 export interface Event extends std.$Object {
   "user": User;
-  "createdAt": Date;
   "name": string;
   "draft"?: boolean | null;
   "endDate"?: Date | null;
-  "memberid"?: number | null;
   "onSale"?: boolean | null;
   "published"?: boolean | null;
   "startDate": Date;
   "thumbnail"?: string | null;
   "description"?: string | null;
-  "venueid"?: number | null;
+  "createdAt"?: Date | null;
 }
 export interface Password extends std.$Object {
   "user": User;
@@ -72,8 +70,22 @@ export interface Password extends std.$Object {
 export interface User extends std.$Object {
   "password"?: Password | null;
   "events": Event[];
+  "venues": Venue[];
   "createdAt": Date;
   "email": string;
+}
+export interface Venue extends std.$Object {
+  "user": User;
+  "address"?: string | null;
+  "city"?: string | null;
+  "country"?: string | null;
+  "createdAt"?: Date | null;
+  "name"?: string | null;
+  "number"?: string | null;
+  "region"?: string | null;
+  "street"?: string | null;
+  "vmt_id"?: string | null;
+  "zip"?: string | null;
 }
 export namespace schema {
   export type AccessKind = "Select" | "UpdateRead" | "UpdateWrite" | "Delete" | "Insert";
@@ -289,6 +301,7 @@ export interface types {
     "Event": Event;
     "Password": Password;
     "User": User;
+    "Venue": Venue;
   };
   "schema": {
     "AccessKind": schema.AccessKind;

@@ -2,7 +2,7 @@ import type { Event } from "dbschema/interfaces";
 import { e, client } from "~/db.server";
 
 export function User(id: string) {
-  return e.select(e.User, (user) => ({
+  return e.select(e.User, () => ({
     // email: true,
     // ...e.User["*"],
     filter_single: { id },
@@ -38,7 +38,7 @@ export async function getEvents(params: { userId: string }) {
   return events;
 }
 
-type CreateEventParams = Omit<Event, "user" | "createdAt" | "id">;
+type CreateEventParams = Omit<Event, "user" | "id">;
 
 export async function createEvent(
   eventParams: CreateEventParams,

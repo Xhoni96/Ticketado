@@ -2,7 +2,22 @@
 module.exports = {
   content: ["./app/**/*.{ts,tsx,jsx,js}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        lightBlue: "#5BC0F8",
+        // transparent: "transparent",
+        // current: "currentColor",
+        // white: "#ffffff",
+        // black: "black",
+        // gray: "gray",
+        // productHeader: "#324d67",
+        // bannerBackground: "#dcdcdc",
+        // bannerParagraph: "#5f5f5f",
+        // bannerButton: "#f02d34",
+        // productBackground: "#ebebeb",
+        // success: "#31a831",
+      },
+    },
   },
   plugins: [],
 };

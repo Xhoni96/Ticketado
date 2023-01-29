@@ -5,6 +5,7 @@ module default {
     required property createdAt -> datetime { default := datetime_current() };
     link password := .<user[is Password];
     multi link events := .<user[is Event];
+    multi link venues := .<user[is Venue];
   }
 
   type Password {
@@ -21,15 +22,47 @@ module default {
     property description -> str;
     property endDate -> datetime;
     property onSale -> bool;
-    property memberid -> int16;
+    # property memberId -> uuid;
     property thumbnail -> str;
     property draft -> bool;
     property published -> bool;
-    property venueid -> int16;
-    required property createdAt -> datetime { default := datetime_current() };
+    # property venueId -> str;
+    property createdAt -> datetime { default := datetime_current() };
     required link user -> User {
       on target delete delete source;
     };
+  }
+
+  type Venue {
+    property address -> str;
+    property city -> str;
+    property  country -> str;
+    # property  countrycode -> bool;
+    property createdAt -> datetime { default := datetime_current() };
+    #  property deleted -> bool;
+    # property  googleid -> bool | str;
+    # property  googlerefid -> str;
+    # property id: 361,
+    # property lat -> str;
+    # property lng -> str;
+    # property memberId -> uuid;
+    # property modified -> datetime;
+    property name -> str;
+    property number -> str;
+    #  property parentid -> str;
+    property region -> str;
+    property street -> str;
+    #  property vmtHost -> str; "https://vmt-staging.softjourn.if.ua/front"
+    property vmt_id -> str;
+    property zip -> str;
+
+    # link password := .<user[is Password];
+
+      required link user -> User {
+      on target delete delete source;
+    };
+
+    
   }
 
 }

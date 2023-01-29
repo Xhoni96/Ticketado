@@ -11,6 +11,8 @@ export async function loader({ request, params }: LoaderArgs) {
   invariant(params.eventId, "eventId not found");
 
   const event = await getEvent({ userId, id: params.eventId });
+  console.log(event, "eventsssssssss");
+
   if (!event) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -18,10 +20,14 @@ export async function loader({ request, params }: LoaderArgs) {
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const userId = await requireUserId(request);
-  invariant(params.eventId, "eventId not found");
+  const { _action } = Object.fromEntries(await request.formData());
 
-  await deleteEvent({ userId, id: params.eventId });
+  if (_action === "delete") {
+    const userId = await requireUserId(request);
+    invariant(params.eventId, "eventId not found");
+
+    await deleteEvent({ userId, id: params.eventId });
+  }
 
   return redirect("/events");
 }
@@ -37,10 +43,15 @@ export default function EventDetailsPage() {
       <hr className="my-4" />
       <Form method="post">
         <button
-          type="submit"
           className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          name="_action"
+          value="delete"
         >
           Delete
+        </button>
+
+        <button name="_action" value="back">
+          Go Back
         </button>
       </Form>
     </div>

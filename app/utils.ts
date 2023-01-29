@@ -1,7 +1,8 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 
-import type { User } from "~/types";
+import type { User } from "../dbschema/interfaces";
+import type { ZodIssue } from "zod";
 
 const DEFAULT_REDIRECT = "/";
 
@@ -71,3 +72,14 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export const zodErrorsToObj = (zodErrors: ZodIssue[]) => {
+  let errors = {
+    email: "",
+    password: "",
+  };
+  zodErrors.forEach((issue) => {
+    errors[issue.path[0] as keyof typeof errors] = issue.message;
+  });
+  return errors;
+};
