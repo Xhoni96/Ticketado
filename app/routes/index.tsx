@@ -15,7 +15,10 @@ export default function Index() {
           </p>
         </div>
       ) : (
-        ""
+        <div className="mt-6 flex flex-col gap-3">
+          <h2>Hey good to have you here 👋</h2>
+          <h1 className="text-2xl">Please buy our APP 😭</h1>
+        </div>
       )}
     </div>
   );
