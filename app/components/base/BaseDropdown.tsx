@@ -7,7 +7,7 @@ export const DropdownBase = ({ children }: { children: React.ReactNode }) => {
     <div>
       <Menu className="relative" as="div">
         {/* <div> */}
-        <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-violet-500 px-4 py-2 text-sm font-medium text-white  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+        <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-violet-500 px-4 py-2 text-sm font-medium text-white  hover:bg-violet-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
           {({ open }) => (
             <>
               Options

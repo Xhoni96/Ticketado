@@ -1,5 +1,5 @@
 import { Menu } from "@headlessui/react";
-import { DropdownBase } from "./base/DropdownBase";
+import { DropdownBase } from "./base/BaseDropdown";
 import { PowerIcon, UserIcon, WrenchIcon } from "@heroicons/react/20/solid";
 import { Form } from "@remix-run/react";
 

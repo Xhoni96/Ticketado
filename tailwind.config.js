@@ -17,6 +17,12 @@ module.exports = {
         // productBackground: "#ebebeb",
         // success: "#31a831",
       },
+      gridTemplateColumns: {
+        2: "repeat(auto-fit, minmax(4rem, 50%))",
+      },
+      flexGrow: {
+        3: "3",
+      },
     },
   },
   plugins: [],

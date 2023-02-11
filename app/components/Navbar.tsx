@@ -30,7 +30,7 @@ export const Navbar = () => {
         </NavLink>
       </div>
       <div className="flex items-center gap-4">
-        <p className="bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-xl text-transparent">
+        <p className="bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-xl text-transparent hover:bg-gradient-to-l hover:from-blue-500 hover:to-violet-500">
           {user?.email}
         </p>
         {user?.id ? <SignOutDropdown /> : <SignIn />}

@@ -76,7 +76,6 @@ export interface User extends std.$Object {
 }
 export interface Venue extends std.$Object {
   "user": User;
-  "address"?: string | null;
   "city"?: string | null;
   "country"?: string | null;
   "createdAt"?: Date | null;
@@ -86,6 +85,7 @@ export interface Venue extends std.$Object {
   "street"?: string | null;
   "vmt_id"?: string | null;
   "zip"?: string | null;
+  "address"?: string | null;
 }
 export namespace schema {
   export type AccessKind = "Select" | "UpdateRead" | "UpdateWrite" | "Delete" | "Insert";

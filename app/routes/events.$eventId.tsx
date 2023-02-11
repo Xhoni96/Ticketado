@@ -41,16 +41,20 @@ export default function EventDetailsPage() {
       <p className="py-6">Start Date: {data.event.startDate}</p>
       <p className="py-6">Description: {data.event.description}</p>
       <hr className="my-4" />
-      <Form method="post">
+      <Form method="post" className="flex gap-4">
         <button
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="rounded bg-red-500  py-2 px-4 text-white transition-transform hover:bg-red-600 active:translate-y-[1px]"
           name="_action"
           value="delete"
         >
           Delete
         </button>
 
-        <button name="_action" value="back">
+        <button
+          name="_action"
+          value="back"
+          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 transition-transform hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-[1px]"
+        >
           Go Back
         </button>
       </Form>

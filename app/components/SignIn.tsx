@@ -4,7 +4,7 @@ import {
   useNavigation,
   useSearchParams,
 } from "@remix-run/react";
-import { PopOverBase } from "./base/PopoverBase";
+import { PopOverBase } from "./base/BasePopover";
 import type { ActionType } from "~/root";
 
 export const SignIn = () => {
