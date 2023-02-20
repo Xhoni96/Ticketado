@@ -21,16 +21,23 @@ module default {
     required property startDate -> datetime;
     property description -> str;
     property endDate -> datetime;
-    property onSale -> bool;
+    property onSale -> bool { default := false };
     # property memberId -> uuid;
     property thumbnail -> str;
     property draft -> bool;
-    property published -> bool;
-    # property venueId -> str;
+    property published -> bool { default := false };
+    property registration -> bool { default := false };
+    property inventory -> int16;
+
     property createdAt -> datetime { default := datetime_current() };
+
     required link user -> User {
       on target delete delete source;
     };
+    
+     link venue -> Venue {
+       on target delete allow;
+    }
   }
 
   type Venue {
@@ -61,6 +68,11 @@ module default {
       required link user -> User {
       on target delete delete source;
     };
+
+    # link event -> Event {
+    #    on target delete allow;
+    # }
+
 
     
   }

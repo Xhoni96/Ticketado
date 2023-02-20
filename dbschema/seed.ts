@@ -29,37 +29,34 @@ async function seed() {
     })
     .run(client);
 
-  // create venues
-  /* const venues =  */ await e
-    .set(
-      e.insert(e.Venue, {
-        name: "My first venue",
-        // memberId: userData?.id,
-        address: "Myshugi 3/42, Lviv",
-        city: "Lviv",
-        country: "Ukraine",
-        region: "Lvivska",
-        street: "Myshugi 3/42",
-        number: "1111",
-        zip: "79034",
+  const venues = [
+    e.insert(e.Venue, {
+      name: "My first venue",
+      // memberId: userData?.id,
+      address: "Myshugi 3/42, Lviv",
+      city: "Lviv",
+      country: "Ukraine",
+      region: "Lvivska",
+      street: "Myshugi 3/42",
+      number: "1111",
+      zip: "79034",
 
-        user,
-      }),
-      e.insert(e.Venue, {
-        name: "My second venue",
-        // memberId: userData?.id,
-        address: "Sevastopol sq, Kyiv",
-        city: "Kyiv",
-        country: "Ukraine",
-        region: "Kyiv",
-        street: "Sevastopol sq",
-        number: "1111",
-        zip: "79034",
+      user,
+    }),
+    e.insert(e.Venue, {
+      name: "My second venue",
+      // memberId: userData?.id,
+      address: "Sevastopol sq, Kyiv",
+      city: "Kyiv",
+      country: "Ukraine",
+      region: "Kyiv",
+      street: "Sevastopol sq",
+      number: "1111",
+      zip: "79034",
 
-        user,
-      })
-    )
-    .run(client);
+      user,
+    }),
+  ];
 
   // create events
   await e
@@ -71,6 +68,9 @@ async function seed() {
         published: false,
         onSale: false,
         draft: false,
+        registration: true,
+        inventory: 1,
+        venue: venues[0],
         // venueId: venues[0].id,
         user,
       }),
@@ -81,11 +81,19 @@ async function seed() {
         published: false,
         onSale: false,
         draft: false,
+        registration: false,
+        inventory: 0,
+        venue: venues[1],
         // venueId: venues[1].id,
         user,
       })
     )
     .run(client);
+
+  // create venues
+
+  await e.set(...venues).run(client);
+  // await venues.run
 
   console.log(`Database has been seeded. 🌱`);
 }

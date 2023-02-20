@@ -60,6 +60,8 @@ export async function verifyLogin(email: string, password: string) {
 
   const user = await userQuery.run(client);
 
+  console.log(user, "user");
+
   if (!user?.password) {
     return null;
   }

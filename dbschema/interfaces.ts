@@ -53,15 +53,18 @@ export namespace cfg {
 }
 export interface Event extends std.$Object {
   "user": User;
+  "venue"?: Venue | null;
   "name": string;
   "draft"?: boolean | null;
   "endDate"?: Date | null;
-  "onSale"?: boolean | null;
-  "published"?: boolean | null;
   "startDate": Date;
   "thumbnail"?: string | null;
   "description"?: string | null;
   "createdAt"?: Date | null;
+  "inventory"?: number | null;
+  "onSale"?: boolean | null;
+  "published"?: boolean | null;
+  "registration"?: boolean | null;
 }
 export interface Password extends std.$Object {
   "user": User;

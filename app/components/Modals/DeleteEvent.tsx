@@ -1,11 +1,11 @@
 import { ModalBase } from "../base/BaseModal";
 import { useSetAtom, useAtomValue } from "jotai";
-import { deleteEventAtom, eventNameAtom } from "~/atoms/atom";
+import { deleteEventAtom, selectedEventAtom } from "~/atoms/atom";
 import { Form } from "@remix-run/react";
 
 export const DeleteEvent = () => {
   const setModalState = useSetAtom(deleteEventAtom);
-  const eventName = useAtomValue(eventNameAtom);
+  const eventData = useAtomValue(selectedEventAtom);
 
   const handleClose = () => setModalState(false);
 
@@ -13,7 +13,8 @@ export const DeleteEvent = () => {
     <ModalBase atom={deleteEventAtom} title="Confirm your action">
       <Form method="post">
         <h2>
-          Are you sure that you want to delete <strong>{eventName}</strong>
+          Are you sure that you want to delete{" "}
+          <strong>{eventData?.name}</strong>
           &nbsp; event?
         </h2>
 

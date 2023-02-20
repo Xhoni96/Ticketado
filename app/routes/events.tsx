@@ -20,49 +20,67 @@ import {
   addEventAtom,
   attendeesAtom,
   deleteEventAtom,
-  eventNameAtom,
+  selectedEventAtom,
   promoteEventAtom,
   ticketSalesAtom,
 } from "~/atoms/atom";
-import {
-  TicketSales,
-  Attendees,
-  PromoteEvent,
-  AddEvent,
-  DeleteEvent,
-} from "~/components/Modals/";
+import { TicketSales, Attendees, PromoteEvent, AddEvent, DeleteEvent } from "~/components/Modals/";
+import { updateEvent } from "~/models/event.server";
 
 export async function loader({ request }: LoaderArgs) {
+  // const form = await request.formData();
   const userId = await requireUserId(request);
   const eventsList = await getEvents({ userId });
-  return json({ eventsList });
+  console.log("LOADERRR");
+
+  return json(eventsList);
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const { _action } = Object.fromEntries(await request.formData());
+  const req = Object.fromEntries(await request.formData());
+  // const data = Object.fromEntries(await request.formData());
+  // console.log(data, "data");
+  // console.log(data.eventId, "data.eventId");
+  console.log(req, "seatsQuantityAttendees");
+  const eventId = req.eventId as string;
 
-  console.log("trynna delete an event aren't you?");
-  if (_action === "delete") {
-    // const userId = await requireUserId(request);
-    // invariant(params.eventId, "eventId not found");
-    // await deleteEvent({ userId, id: params.eventId });
+  // console.log("trynna delete an event aren't you?", _action);
+  if (req._action === "attendesRegistration") {
+    updateEvent(eventId, { registration: req.registration === "on" ? true : false });
+  }
+  if (req._action === "seatsQuantityAttendees") {
+    updateEvent(eventId, { inventory: Number(req.inventory) });
+  }
+  if (req._action === "enableSales") {
+    updateEvent(eventId, { onSale: req.onSale === "on" ? true : false });
+  }
+  if (req._action === "promoteEvent") {
+    updateEvent(eventId, { published: req.published === "on" ? true : false });
   }
 
-  return "yo";
+  // if (_action === "delete") {
+  //   // const userId = await requireUserId(request);
+  //   // invariant(params.eventId, "eventId not found");
+  //   // await deleteEvent({ userId, id: params.eventId });
+  // }
+
+  // return json(res);
   // return redirect("/events");
+  return "yo";
 }
 
 export default function EventsPage() {
-  const data = useLoaderData<typeof loader>();
-  const setIsOpen = useSetAtom(addEventAtom);
+  const eventsList = useLoaderData<typeof loader>();
+  const setNewEventModal = useSetAtom(addEventAtom);
   const setPromotEventModal = useSetAtom(promoteEventAtom);
   const setAttendeesModal = useSetAtom(attendeesAtom);
   const setTicketSalesModal = useSetAtom(ticketSalesAtom);
   const setDeleteModal = useSetAtom(deleteEventAtom);
-  const setEventName = useSetAtom(eventNameAtom);
+  // save only eventId if other data is not needed
+  const setSelectedEvent = useSetAtom(selectedEventAtom);
 
-  const handleOpen = () => {
-    setIsOpen(true);
+  const handleNewEventModal = () => {
+    setNewEventModal(true);
   };
 
   return (
@@ -73,7 +91,7 @@ export default function EventsPage() {
           <div>Past Events</div>
         </div>
         <button
-          onClick={handleOpen}
+          onClick={handleNewEventModal}
           // className="rounded-lg bg-violet-500 px-5 py-2 text-white transition-all hover:bg-violet-600 active:translate-y-[1px]"
           className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 transition-transform hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-[1px]"
         >
@@ -86,14 +104,11 @@ export default function EventsPage() {
         <DeleteEvent />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        {data.eventsList.length === 0 ? (
+        {eventsList.length === 0 ? (
           <p className="p-4">No Events yet</p>
         ) : (
-          data.eventsList.map((event) => (
-            <div
-              className="flex h-40 divide-x rounded-sm border-2 border-solid"
-              key={event.id}
-            >
+          eventsList.map((event) => (
+            <div className="flex h-40 divide-x rounded-sm border-2 border-solid" key={event.id}>
               <div className="flex-grow">
                 <img className="h-full" src={noImage} alt="event" />
               </div>
@@ -128,17 +143,27 @@ export default function EventsPage() {
                     className=" h-9 w-9 cursor-pointer rounded-sm  stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
                     onClick={() => {
                       setPromotEventModal(true);
+                      setSelectedEvent(event);
                     }}
                   />
-                  <UserIcon
-                    onClick={() => {
-                      setAttendeesModal(true);
-                    }}
-                    className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
-                  />
+                  <div className="flex">
+                    <UserIcon
+                      onClick={() => {
+                        setAttendeesModal(true);
+                        setSelectedEvent(event);
+                      }}
+                      className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
+                    />
+                    {event.registration ? (
+                      <span className="-ml-3 flex h-4 w-4 items-center justify-center rounded-[50%] bg-red-400 text-sm text-white">
+                        {event.inventory}
+                      </span>
+                    ) : null}
+                  </div>
                   <RocketLaunchIcon
                     onClick={() => {
                       setTicketSalesModal(true);
+                      setSelectedEvent(event);
                     }}
                     className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
                   />
@@ -146,7 +171,7 @@ export default function EventsPage() {
                   <TrashIcon
                     onClick={() => {
                       setDeleteModal(true);
-                      setEventName(event.name);
+                      setSelectedEvent(event);
                     }}
                     className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
                   />

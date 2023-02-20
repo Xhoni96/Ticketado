@@ -7,11 +7,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type BaseModalProps = { atom: PrimitiveAtom<boolean>; title: string };
 
-export const ModalBase = ({
-  children,
-  atom,
-  title,
-}: PropsWithChildren<BaseModalProps>) => {
+export const ModalBase = ({ children, atom, title }: PropsWithChildren<BaseModalProps>) => {
   const [isOpen, setIsOpen] = useAtom(atom);
 
   function closeModal() {
@@ -56,7 +52,7 @@ export const ModalBase = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                 <div className="mb-4 flex items-center justify-between border-b-2 pb-1">
                   <Dialog.Title
                     as="h3"
