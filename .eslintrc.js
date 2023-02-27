@@ -6,6 +6,9 @@ module.exports = {
     "@remix-run/eslint-config/jest-testing-library",
     "prettier",
   ],
+  rules: {
+    "@typescript-eslint/switch-exhaustiveness-check": "warn",
+  },
   env: {
     "cypress/globals": true,
   },

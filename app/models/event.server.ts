@@ -50,6 +50,9 @@ export async function getEventsByName(params: { name: string; userId: string }) 
   const events = await e
     .select(e.Event, (event) => ({
       ...e.Event["*"],
+      venue: {
+        ...e.Venue["*"],
+      },
       // order_by: { expression: event.createdAt, direction: e.DESC },
       filter: e.op(
         e.op(event.user, "=", UserQuery(params.userId)),
@@ -79,7 +82,7 @@ export const updateEvent = async (id: string, value: { [key: string]: /* string 
 
   // return update;
   // return await e.select(update, () => ({ ...e.Event["*"] })).run(client);
-  update.run(client);
+  return update.run(client);
 };
 
 export async function deleteEvent(params: { id: string; userId: string }) {

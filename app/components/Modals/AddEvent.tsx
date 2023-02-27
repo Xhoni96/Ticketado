@@ -1,80 +1,99 @@
 import { ModalBase } from "../base/BaseModal";
-import { addEventAtom } from "~/atoms/atom";
+import { addEventAtom, editVenueAtom, selectedVenueAtom } from "~/atoms/atom";
 import { Autocomplete } from "../Autocomplete";
 import noImage from "../../assets/no-image.png";
-import { Form, useCatch, useFetcher } from "@remix-run/react";
-import type { Event } from "~/types";
+import { Form } from "@remix-run/react";
+import type { Event, Venue } from "~/types";
 import { useState } from "react";
-import { useMatchesData } from "~/utils";
+import { DateTime } from "../DateTime";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useSetAtom } from "jotai";
+import { EditVenue } from "./EditVenue";
 
 export const AddEvent = () => {
-  const fetcher = useFetcher();
-  const [selected, setSelected] = useState<Event | null>();
-  const [query, setQuery] = useState("");
-  const loaderData = useMatchesData("searchEvent");
+  const [selectedEvent, setSelectedEvent] = useState<Event>();
+  const [selectedVenue, setSelectedVenue] = useState<Venue>();
+  const [endTime, setEndtime] = useState(false);
+  const [errors, setErrors] = useState({ eventName: false, startDate: false });
+  const setEditModal = useSetAtom(editVenueAtom);
+  const setSelectedVenueModal = useSetAtom(selectedVenueAtom);
+  // const loaderData = useMatchesData("searchEvent");
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    fetcher.submit(e.target.form, {
-      // action: "searchEvent",
-      // method: "get",
-    });
-    setQuery(e.target.value);
-    setSelected(null);
+  const handleSelectedEvent = (val: Event) => {
+    setSelectedEvent(val);
+    console.log(val, "val");
+
+    if (val.venue) {
+      setSelectedVenue(val.venue);
+    }
   };
 
-  const handleSelected = (val: Event) => {
-    setSelected(val);
-    setQuery("");
+  const handleSelectedVenue = (val: Venue) => {
+    setSelectedVenue(val);
   };
-  const items = fetcher.data;
 
-  console.log(loaderData, "loaderData");
+  const handleEndtime = () => {
+    setEndtime(!endTime);
+  };
+
+  const handleEdit = () => {
+    setEditModal(true);
+    setSelectedVenueModal(selectedVenue as any);
+  };
 
   return (
     <ModalBase atom={addEventAtom} title="Add Event">
-      <fetcher.Form method="get" action="searchEvent">
+      <Form method="post">
         <div className="flex text-gray-500">
           <div className="h-28 grow">
             <img className="h-full" src={noImage} alt="event" />
           </div>
           <div className="flex grow-3 flex-col gap-4">
             <Autocomplete
-              onChange={handleSearch}
-              items={items ?? []}
-              name="searchEvents"
-              selected={selected}
-              setSelected={handleSelected}
+              name="selectedEventName"
+              selected={selectedEvent}
+              setSelected={handleSelectedEvent}
               placeholder="Search existing event or enter a new one"
-              query={query}
+              action="resources/searchEvent"
             />
             <div className="flex justify-between">
-              <div>
-                <label htmlFor="startDate">Start time</label>
-                <input
-                  className="block"
-                  type="datetime-local"
-                  defaultValue={new Date().toLocaleString()}
-                  id="startDate"
-                />
-              </div>
-              {/* <input type="datetime-local" /> */}
+              <DateTime label="Start time" name="startTime" />
+
+              {endTime ? <div className="h-full w-[1px] bg-gray-400" /> : null}
+              {endTime ? (
+                <div className="flex">
+                  <DateTime label="End time" name="endTime" />
+                  <XMarkIcon className="h-5 w-5 cursor-pointer stroke-violet-500" onClick={handleEndtime} />
+                </div>
+              ) : (
+                <p className="cursor-pointer self-end text-blue-500" onClick={handleEndtime}>
+                  Add end time
+                </p>
+              )}
             </div>
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <Autocomplete
-            onChange={handleSearch}
-            items={items}
-            name="searchEvents"
-            selected={selected}
-            setSelected={handleSelected}
-            placeholder="Search existing venue or enter a new one"
-            query={query}
-          />
+          <div className="relative flex items-center first:w-full">
+            <Autocomplete
+              name="selectedVenue"
+              selected={selectedVenue}
+              setSelected={handleSelectedVenue}
+              placeholder="Search existing venue or enter a new one"
+              action="resources/searchVenue"
+            />
+            <button
+              className="absolute right-4 rounded-md bg-purple-400 px-3 py-1 text-white"
+              type="button"
+              onClick={handleEdit}
+            >
+              Edit
+            </button>
+          </div>
           <button type="button" className="self-start rounded-md bg-gray-200 py-1 px-4">
             Inventory Managment
           </button>
-          <input type="text" placeholder="Keywords" className="border pl-2 text-gray-500" />
+          <input name="keywords" type="text" placeholder="Keywords" className="border pl-2 text-gray-500" />
         </div>
 
         <div className="mt-4 flex justify-end gap-4">
@@ -83,6 +102,8 @@ export const AddEvent = () => {
           </button>
           <button
             type="submit"
+            name="_action"
+            value="addEvent"
             formAction="/events"
             formMethod="post"
             className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 transition-transform hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-[1px]"
@@ -109,7 +130,8 @@ export const AddEvent = () => {
           Got it, thanks!
         </button>
       </div> */}
-      </fetcher.Form>
+      </Form>
+      <EditVenue />
     </ModalBase>
   );
 };

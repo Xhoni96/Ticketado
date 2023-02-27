@@ -53,7 +53,7 @@ export const ModalBase = ({ children, atom, title }: PropsWithChildren<BaseModal
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                <div className="mb-4 flex items-center justify-between border-b-2 pb-1">
+                <div className="mb-4 flex items-center justify-between border-b-2 pb-2">
                   <Dialog.Title
                     as="h3"
                     className="bg-gradient-to-r from-blue-500 to-violet-800 bg-clip-text text-lg font-medium leading-6 text-transparent"

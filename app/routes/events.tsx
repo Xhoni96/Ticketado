@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import noImage from "../assets/no-image.png";
@@ -15,7 +15,7 @@ import {
 import { useSetAtom } from "jotai";
 
 import { requireUserId } from "~/session.server";
-import { getEvents } from "~/models/event.server";
+import { createEvent, getEvents } from "~/models/event.server";
 import {
   addEventAtom,
   attendeesAtom,
@@ -26,36 +26,50 @@ import {
 } from "~/atoms/atom";
 import { TicketSales, Attendees, PromoteEvent, AddEvent, DeleteEvent } from "~/components/Modals/";
 import { updateEvent } from "~/models/event.server";
+import { updateVenue } from "~/models/venue.server";
 
 export async function loader({ request }: LoaderArgs) {
   // const form = await request.formData();
   const userId = await requireUserId(request);
   const eventsList = await getEvents({ userId });
-  console.log("LOADERRR");
+  // console.log("LOADERRR");
 
   return json(eventsList);
 }
 
 export async function action({ request, params }: ActionArgs) {
-  const req = Object.fromEntries(await request.formData());
+  const userId = await requireUserId(request);
+
+  const { _action, ...values } = Object.fromEntries(await request.formData());
+
   // const data = Object.fromEntries(await request.formData());
   // console.log(data, "data");
   // console.log(data.eventId, "data.eventId");
-  console.log(req, "seatsQuantityAttendees");
-  const eventId = req.eventId as string;
+  console.log(values, "values");
+  console.log(_action, "_action");
+  const eventId = values.eventId as string;
 
+  if (_action === "addEvent") {
+    // const { venueId, ...otherValues } = values;
+    // await createEvent(values, userId);
+  }
   // console.log("trynna delete an event aren't you?", _action);
-  if (req._action === "attendesRegistration") {
-    updateEvent(eventId, { registration: req.registration === "on" ? true : false });
+  if (_action === "attendesRegistration") {
+    return await updateEvent(eventId, { registration: values.registration === "on" ? true : false });
   }
-  if (req._action === "seatsQuantityAttendees") {
-    updateEvent(eventId, { inventory: Number(req.inventory) });
+  if (_action === "seatsQuantityAttendees") {
+    return await updateEvent(eventId, { inventory: Number(values.inventory) });
   }
-  if (req._action === "enableSales") {
-    updateEvent(eventId, { onSale: req.onSale === "on" ? true : false });
+  if (_action === "enableSales") {
+    return await updateEvent(eventId, { onSale: values.onSale === "on" ? true : false });
   }
-  if (req._action === "promoteEvent") {
-    updateEvent(eventId, { published: req.published === "on" ? true : false });
+  if (_action === "promoteEvent") {
+    return await updateEvent(eventId, { published: values.published === "on" ? true : false });
+  }
+
+  if (_action === "editVenue") {
+    const { venueId, ...otherValues } = values;
+    await updateVenue(venueId as string, otherValues);
   }
 
   // if (_action === "delete") {
@@ -65,8 +79,8 @@ export async function action({ request, params }: ActionArgs) {
   // }
 
   // return json(res);
-  // return redirect("/events");
-  return "yo";
+  return redirect("/events");
+  // return "yo";
 }
 
 export default function EventsPage() {
@@ -82,6 +96,9 @@ export default function EventsPage() {
   const handleNewEventModal = () => {
     setNewEventModal(true);
   };
+  // try optimistic ui for the checkbox in modals when the ui does not update
+  // or check if maybe you can not render the modal when there is no data maybe that is causing the issue
+  // https://reactrouter.com/en/main/hooks/use-fetchers#usefetchers
 
   return (
     <main className="flex flex-col p-4">
@@ -93,7 +110,8 @@ export default function EventsPage() {
         <button
           onClick={handleNewEventModal}
           // className="rounded-lg bg-violet-500 px-5 py-2 text-white transition-all hover:bg-violet-600 active:translate-y-[1px]"
-          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 transition-transform hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-[1px]"
+          // className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 transition-transform hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-[1px]"
+          className="btn-blue"
         >
           Add Event
         </button>
