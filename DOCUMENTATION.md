@@ -4,6 +4,8 @@
 
 2. Add debounce to autocomplete inputs
 
+3. Use pnpm instead of npm
+
 # Remix questions | pain points
 
 - type inference from useLoader() hook. It infers type with SerializeObject<UndefinedToOptional> and is very annoying. Check if there's a solution to that
