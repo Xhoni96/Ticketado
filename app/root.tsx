@@ -2,7 +2,7 @@ import type { ActionArgs, LinksFunction, LoaderArgs, MetaFunction } from "@remix
 import { json } from "@remix-run/node";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 
-import tailwindStylesheetUrl from "./styles/tailwind.css";
+import tailwindStylesheetUrl from "~/styles/tailwind.css";
 import { createUserSession, getUser } from "./session.server";
 import { safeRedirect } from "./utils/utils";
 import { verifyLogin } from "./models/user.server";
