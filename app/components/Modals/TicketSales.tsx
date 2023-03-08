@@ -1,9 +1,8 @@
 import { selectedEventAtom, ticketSalesAtom, ticketTypeAtom } from "~/atoms/atom";
 import { ModalBase } from "../base/BaseModal";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useFetcher } from "@remix-run/react";
 import { Switch } from "../Switch";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useFetcher } from "react-router-dom";
 import type { Event } from "~/types";
 import { NewTicketType } from "./NewTicketType";
 
