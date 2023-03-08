@@ -17,10 +17,12 @@ export const Attendees = () => {
   const enabled = currentEvent?.registration ?? false;
 
   const toggleSwitch = (value: boolean) => {
-    fetcher.submit(
-      { _action: "attendesRegistration", eventId: eventData?.id!, registration: value ? "on" : "off" },
-      { method: "post" }
-    );
+    if (eventData) {
+      fetcher.submit(
+        { _action: "attendesRegistration", eventId: eventData.id, registration: value ? "on" : "off" },
+        { method: "patch" }
+      );
+    }
   };
 
   const closeModal = () => {

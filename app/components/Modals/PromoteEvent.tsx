@@ -19,7 +19,7 @@ export const PromoteEvent = () => {
     if (eventData) {
       fetcher.submit(
         { _action: "promoteEvent", eventId: eventData?.id, published: value ? "on" : "off" },
-        { method: "post" }
+        { method: "patch" }
       );
     }
   };

@@ -18,7 +18,8 @@ module.exports = {
         // success: "#31a831",
       },
       gridTemplateColumns: {
-        2: "repeat(auto-fit, minmax(4rem, 50%))",
+        // 2: "repeat(auto-fit, minmax(4rem, 50%))",
+        2: "repeat(auto-fit, minmax(25rem, 34rem))",
       },
       flexGrow: {
         3: "3",

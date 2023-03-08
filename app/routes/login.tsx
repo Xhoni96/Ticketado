@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { createUserSession, getUserId } from "~/session.server";
 import { verifyLogin } from "~/models/user.server";
-import { safeRedirect, validateEmail } from "~/utils";
+import { safeRedirect, validateEmail } from "~/utils/utils";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
@@ -21,33 +21,21 @@ export async function action({ request }: ActionArgs) {
   const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
-    return json(
-      { errors: { email: "Email is invalid", password: null } },
-      { status: 400 }
-    );
+    return json({ errors: { email: "Email is invalid", password: null } }, { status: 400 });
   }
 
   if (typeof password !== "string" || password.length === 0) {
-    return json(
-      { errors: { email: null, password: "Password is required" } },
-      { status: 400 }
-    );
+    return json({ errors: { email: null, password: "Password is required" } }, { status: 400 });
   }
 
   if (password.length < 8) {
-    return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 }
-    );
+    return json({ errors: { email: null, password: "Password is too short" } }, { status: 400 });
   }
 
   const user = await verifyLogin(email, password);
 
   if (!user) {
-    return json(
-      { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 }
-    );
+    return json({ errors: { email: "Invalid email or password", password: null } }, { status: 400 });
   }
 
   return createUserSession({
@@ -84,10 +72,7 @@ export default function LoginPage() {
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6">
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email address
             </label>
             <div className="mt-1">
@@ -112,10 +97,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
             <div className="mt-1">
@@ -152,10 +134,7 @@ export default function LoginPage() {
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
-              <label
-                htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
-              >
+              <label htmlFor="remember" className="ml-2 block text-sm text-gray-900">
                 Remember me
               </label>
             </div>

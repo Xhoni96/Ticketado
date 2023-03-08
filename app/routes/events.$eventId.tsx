@@ -1,45 +1,50 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
-import invariant from "tiny-invariant";
+// import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+// import { json, redirect } from "@remix-run/node";
+import { Form, useCatch } from "@remix-run/react";
+import { useAtomValue } from "jotai";
+import { selectedEventAtom } from "~/atoms/atom";
+// import invariant from "tiny-invariant";
 
-import { deleteEvent, getEvent } from "~/models/event.server";
-import { requireUserId } from "~/session.server";
+// import { deleteEvent, getEvent } from "~/models/event.server";
+// import { requireUserId } from "~/session.server";
 
-export async function loader({ request, params }: LoaderArgs) {
-  const userId = await requireUserId(request);
-  invariant(params.eventId, "eventId not found");
+// export async function loader({ request, params }: LoaderArgs) {
+//   const userId = await requireUserId(request);
+//   invariant(params.eventId, "eventId not found");
 
-  const event = await getEvent({ userId, id: params.eventId });
-  console.log(event, "eventsssssssss");
+//   // const event = await getEvent({ userId, id: params.eventId });
+//   console.log(event, "eventsssssssss");
 
-  if (!event) {
-    throw new Response("Not Found", { status: 404 });
-  }
-  return json({ event });
-}
+//   if (!event) {
+//     throw new Response("Not Found", { status: 404 });
+//   }
+//   return json({ event });
+// }
 
-export async function action({ request, params }: ActionArgs) {
-  const { _action } = Object.fromEntries(await request.formData());
+// export async function action({ request, params }: ActionArgs) {
+//   const { _action } = Object.fromEntries(await request.formData());
 
-  if (_action === "delete") {
-    const userId = await requireUserId(request);
-    invariant(params.eventId, "eventId not found");
+//   // if (_action === "delete") {
+//   //   const userId = await requireUserId(request);
+//   //   invariant(params.eventId, "eventId not found");
 
-    await deleteEvent({ userId, id: params.eventId });
-  }
+//   //   await deleteEvent({ userId, id: params.eventId });
+//   // }
 
-  return redirect("/events");
-}
+//   return redirect("/events");
+// }
 
 export default function EventDetailsPage() {
-  const data = useLoaderData<typeof loader>();
+  // const data = useLoaderData<typeof loader>();
+  const data = useAtomValue(selectedEventAtom);
+
+  if (!data) return null;
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">{data.event.name}</h3>
-      <p className="py-6">Start Date: {data.event.startDate}</p>
-      <p className="py-6">Description: {data.event.description}</p>
+      <h3 className="text-2xl font-bold">{data.name}</h3>
+      <p className="py-6">Start Date: {data.startDate}</p>
+      <p className="py-6">Description: {data.description}</p>
       <hr className="my-4" />
       <Form method="post" className="flex gap-4">
         <button

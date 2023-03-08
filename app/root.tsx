@@ -1,25 +1,14 @@
-import type {
-  ActionFunction,
-  LinksFunction,
-  LoaderArgs,
-  MetaFunction,
-} from "@remix-run/node";
+import type { ActionArgs, LinksFunction, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 import { createUserSession, getUser } from "./session.server";
-import { z } from "zod";
-import { safeRedirect, zodErrorsToObj } from "./utils";
+import { safeRedirect } from "./utils/utils";
 import { verifyLogin } from "./models/user.server";
 import { Navbar } from "./components/Navbar";
+import { loginSchema } from "./schemas/schema.server";
+import { zodErrorsToObj } from "./utils/utils.server";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
@@ -39,12 +28,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export type ActionType = typeof action;
 
-const loginSchema = z.object({
-  email: z.string().email({ message: "Email is invalid" }),
-  password: z.string().min(8, { message: "Password is too short" }),
-});
-
-export const action: ActionFunction = async ({ request, params }) => {
+export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
   const { email, password } = Object.fromEntries(formData);
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/events");
@@ -61,10 +45,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const user = await verifyLogin(zodData.data.email, zodData.data.password);
 
   if (!user) {
-    return json(
-      { errors: { email: "Invalid email or password", password: null } },
-      { status: 400 }
-    );
+    return json({ errors: { email: "Invalid email or password", password: null } }, { status: 400 });
   }
   return createUserSession({
     request,

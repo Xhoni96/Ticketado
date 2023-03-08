@@ -18,9 +18,9 @@ module default {
 
   type Event {
     required property name -> str;
-    required property startDate -> datetime;
+    required property startDate -> str;
     property description -> str;
-    property endDate -> datetime;
+    property endDate -> str;
     property onSale -> bool { default := false };
     # property memberId -> uuid;
     property thumbnail -> str;
@@ -41,7 +41,7 @@ module default {
   }
 
   type Venue {
-    property address -> str;
+    property address -> str; # may need to be deleted
     property city -> str;
     property  country -> str;
     # property  countrycode -> bool;
@@ -54,13 +54,13 @@ module default {
     # property lng -> str;
     # property memberId -> uuid;
     # property modified -> datetime;
-    property name -> str;
+    required property name -> str;
     property number -> str;
     #  property parentid -> str;
     property region -> str;
     property street -> str;
     #  property vmtHost -> str; "https://vmt-staging.softjourn.if.ua/front"
-    property vmt_id -> str;
+    property vmt_id -> str; # check what is needed for. Maybe needs to be deleted
     property zip -> str;
 
     # link password := .<user[is Password];

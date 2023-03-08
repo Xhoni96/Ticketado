@@ -1,4 +1,4 @@
-import { useOptionalUser } from "~/utils";
+import { useOptionalUser } from "~/utils/utils";
 import { SignIn } from "./SignIn";
 import { SignOutDropdown } from "./SignOutDropdown";
 import { Link, NavLink } from "@remix-run/react";
@@ -10,22 +10,13 @@ export const Navbar = () => {
     <nav className="flex items-center justify-between rounded-md bg-gray-100 px-8 py-4">
       <div className="flex gap-10">
         <Link to="/">
-          <img
-            src="https://ticketing-staging.softjourn.if.ua/img/logo.png"
-            alt="ticketing-logo"
-          />
+          <img src="https://ticketing-staging.softjourn.if.ua/img/logo.png" alt="ticketing-logo" />
         </Link>
 
-        <NavLink
-          to="events"
-          className={({ isActive }) => (isActive ? "underline" : "")}
-        >
+        <NavLink to="events" className={({ isActive }) => (isActive ? "underline" : "")}>
           Events
         </NavLink>
-        <NavLink
-          to="venues"
-          className={({ isActive }) => (isActive ? "underline" : "")}
-        >
+        <NavLink to="venues" className={({ isActive }) => (isActive ? "underline" : "")}>
           Venues
         </NavLink>
       </div>

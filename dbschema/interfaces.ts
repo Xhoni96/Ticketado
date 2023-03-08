@@ -56,8 +56,6 @@ export interface Event extends std.$Object {
   "venue"?: Venue | null;
   "name": string;
   "draft"?: boolean | null;
-  "endDate"?: Date | null;
-  "startDate": Date;
   "thumbnail"?: string | null;
   "description"?: string | null;
   "createdAt"?: Date | null;
@@ -65,6 +63,8 @@ export interface Event extends std.$Object {
   "onSale"?: boolean | null;
   "published"?: boolean | null;
   "registration"?: boolean | null;
+  "endDate"?: string | null;
+  "startDate": string;
 }
 export interface Password extends std.$Object {
   "user": User;
@@ -82,13 +82,13 @@ export interface Venue extends std.$Object {
   "city"?: string | null;
   "country"?: string | null;
   "createdAt"?: Date | null;
-  "name"?: string | null;
   "number"?: string | null;
   "region"?: string | null;
   "street"?: string | null;
   "vmt_id"?: string | null;
   "zip"?: string | null;
   "address"?: string | null;
+  "name": string;
 }
 export namespace schema {
   export type AccessKind = "Select" | "UpdateRead" | "UpdateWrite" | "Delete" | "Insert";

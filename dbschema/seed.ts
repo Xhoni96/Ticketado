@@ -64,7 +64,7 @@ async function seed() {
       e.insert(e.Event, {
         name: "My first event",
         description: "Hello, world!",
-        startDate: new Date(),
+        startDate: new Date().toLocaleDateString(),
         published: false,
         onSale: false,
         draft: false,
@@ -77,10 +77,23 @@ async function seed() {
       e.insert(e.Event, {
         name: "My second event",
         description: "Hello, world!",
-        startDate: new Date(),
+        startDate: new Date().toLocaleDateString(),
         published: false,
         onSale: false,
         draft: false,
+        registration: false,
+        inventory: 0,
+        venue: venues[1],
+        // venueId: venues[1].id,
+        user,
+      }),
+      e.insert(e.Event, {
+        name: "My third event",
+        description: "Hello, world!",
+        startDate: new Date().toLocaleDateString(),
+        published: false,
+        onSale: false,
+        draft: true,
         registration: false,
         inventory: 0,
         venue: venues[1],
@@ -92,7 +105,7 @@ async function seed() {
 
   // create venues
 
-  await e.set(...venues).run(client);
+  // await e.set(...venues).run(client);
   // await venues.run
 
   console.log(`Database has been seeded. 🌱`);

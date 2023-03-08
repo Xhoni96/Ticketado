@@ -1,20 +1,33 @@
 import { ModalBase } from "../base/BaseModal";
 import { useSetAtom, useAtomValue } from "jotai";
 import { deleteEventAtom, selectedEventAtom } from "~/atoms/atom";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
+import { useCallback, useEffect } from "react";
 
 export const DeleteEvent = () => {
   const setModalState = useSetAtom(deleteEventAtom);
-  const eventData = useAtomValue(selectedEventAtom);
+  const selectedEvent = useSetAtom(selectedEventAtom);
 
-  const handleClose = () => setModalState(false);
+  const eventData = useAtomValue(selectedEventAtom);
+  const actionData = useActionData();
+
+  const handleClose = useCallback(() => {
+    setModalState(false);
+    selectedEvent(undefined);
+  }, [selectedEvent, setModalState]);
+
+  useEffect(() => {
+    // deleted
+    if (actionData?.deleted) {
+      handleClose();
+    }
+  }, [actionData, handleClose]);
 
   return (
-    <ModalBase atom={deleteEventAtom} title="Confirm your action">
-      <Form method="post">
+    <ModalBase atom={deleteEventAtom} title="Confirm your action" onCloseAtom={selectedEventAtom}>
+      <Form method="delete">
         <h2>
-          Are you sure that you want to delete{" "}
-          <strong>{eventData?.name}</strong>
+          Are you sure that you want to delete <strong>{eventData?.name}</strong>
           &nbsp; event?
         </h2>
 
@@ -34,6 +47,7 @@ export const DeleteEvent = () => {
             No
           </button>
         </div>
+        <input type="hidden" name="eventId" value={eventData?.id ?? ""} />
       </Form>
     </ModalBase>
   );

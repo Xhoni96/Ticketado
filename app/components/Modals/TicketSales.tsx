@@ -18,7 +18,7 @@ export const TicketSales = () => {
     if (currentEvent?.id) {
       fetcher.submit(
         { _action: "enableSales", eventId: currentEvent.id, onSale: value ? "on" : "off" },
-        { method: "post" }
+        { method: "patch" }
       );
     }
   };

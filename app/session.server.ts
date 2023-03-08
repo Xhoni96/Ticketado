@@ -1,5 +1,5 @@
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
-import type { User } from "dbschema/interfaces";
+import type { User } from "../dbschema/interfaces";
 import invariant from "tiny-invariant";
 import { getUserById } from "~/models/user.server";
 
@@ -23,9 +23,7 @@ export async function getSession(request: Request) {
   return sessionStorage.getSession(cookie);
 }
 
-export async function getUserId(
-  request: Request
-): Promise<User["id"] | undefined> {
+export async function getUserId(request: Request): Promise<User["id"] | undefined> {
   const session = await getSession(request);
   const userId = session.get(USER_SESSION_KEY);
   return userId;
@@ -41,10 +39,7 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireUserId(
-  request: Request,
-  redirectTo: string = new URL(request.url).pathname
-) {
+export async function requireUserId(request: Request, redirectTo: string = new URL(request.url).pathname) {
   const userId = await getUserId(request);
   if (!userId) {
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);

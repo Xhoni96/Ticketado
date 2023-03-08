@@ -1,4 +1,4 @@
-import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import noImage from "../assets/no-image.png";
@@ -15,7 +15,7 @@ import {
 import { useSetAtom } from "jotai";
 
 import { requireUserId } from "~/session.server";
-import { createEvent, getEvents } from "~/models/event.server";
+import { createEvent, deleteEvent, getEvents, updateEvent } from "~/models/event.server";
 import {
   addEventAtom,
   attendeesAtom,
@@ -25,14 +25,17 @@ import {
   ticketSalesAtom,
 } from "~/atoms/atom";
 import { TicketSales, Attendees, PromoteEvent, AddEvent, DeleteEvent } from "~/components/Modals/";
-import { updateEvent } from "~/models/event.server";
-import { updateVenue } from "~/models/venue.server";
+import { updateEventProperty } from "~/models/event.server";
+import { createEventSchema } from "~/schemas/schema.server";
+import { zodErrorsToObj } from "~/utils/utils.server";
+import type { Event } from "../types";
+import invariant from "tiny-invariant";
+import { IntlDateTimeFormat } from "~/utils/utils";
 
 export async function loader({ request }: LoaderArgs) {
   // const form = await request.formData();
   const userId = await requireUserId(request);
   const eventsList = await getEvents({ userId });
-  // console.log("LOADERRR");
 
   return json(eventsList);
 }
@@ -40,51 +43,77 @@ export async function loader({ request }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
 
-  const { _action, ...values } = Object.fromEntries(await request.formData());
+  console.log("yooo");
+  const formData = await request.formData();
+  const { _action, ...values } = Object.fromEntries(formData);
 
-  // const data = Object.fromEntries(await request.formData());
-  // console.log(data, "data");
-  // console.log(data.eventId, "data.eventId");
-  console.log(values, "values");
-  console.log(_action, "_action");
   const eventId = values.eventId as string;
 
-  if (_action === "addEvent") {
-    // const { venueId, ...otherValues } = values;
-    // await createEvent(values, userId);
+  if (_action === "addEvent" || _action === "draftEvent" || _action === "updateEvent") {
+    const event = {
+      ...values,
+      draft: _action === "draftEvent" ? true : false,
+      venue: values.venue ? JSON.parse(values.venue as string) : null,
+    };
+    const venueId = event.venue?.id;
+
+    const zodSafeParse = createEventSchema.safeParse(event);
+
+    if (zodSafeParse.success) {
+      const { venue, ...event } = zodSafeParse.data;
+
+      if (_action === "updateEvent") {
+        return await updateEvent(userId, eventId, event, venue, venueId);
+      }
+      return json(await createEvent(event, userId, venue, venueId), { status: 201 });
+    } else {
+      return json({ errors: zodErrorsToObj(zodSafeParse.error.issues) }, { status: 400 });
+    }
   }
-  // console.log("trynna delete an event aren't you?", _action);
   if (_action === "attendesRegistration") {
-    return await updateEvent(eventId, { registration: values.registration === "on" ? true : false });
+    return await updateEventProperty(eventId, { registration: values.registration === "on" ? true : false });
   }
   if (_action === "seatsQuantityAttendees") {
-    return await updateEvent(eventId, { inventory: Number(values.inventory) });
+    return await updateEventProperty(eventId, { inventory: Number(values.inventory) });
   }
   if (_action === "enableSales") {
-    return await updateEvent(eventId, { onSale: values.onSale === "on" ? true : false });
+    return await updateEventProperty(eventId, { onSale: values.onSale === "on" ? true : false });
   }
   if (_action === "promoteEvent") {
-    return await updateEvent(eventId, { published: values.published === "on" ? true : false });
+    return await updateEventProperty(eventId, { published: values.published === "on" ? true : false });
   }
 
-  if (_action === "editVenue") {
-    const { venueId, ...otherValues } = values;
-    await updateVenue(venueId as string, otherValues);
-  }
+  // not needed right now since why don't edit the venue in the editVenueModal but after clicking publish
+  /*   if (_action === "editVenue") {
+  const { id, ...venue } = values; // remove it
 
-  // if (_action === "delete") {
-  //   // const userId = await requireUserId(request);
-  //   // invariant(params.eventId, "eventId not found");
-  //   // await deleteEvent({ userId, id: params.eventId });
-  // }
+    const zodSafeParse = venueSchema.safeParse(venue);
+
+    if (!zodSafeParse.success) {
+      return json({ errors: zodErrorsToObj(zodSafeParse.error.issues) }, { status: 400 });
+    }
+    const safeVenueId = z.string().min(1).safeParse(values.id);
+
+    if (safeVenueId.success) {
+      return await updateVenue(safeVenueId.data, zodSafeParse.data);
+    } else {
+      return await createVenue(zodSafeParse.data, userId);
+    }
+  } */
+
+  if (_action === "delete") {
+    invariant(eventId, "eventId not found");
+    const res = await deleteEvent({ userId, eventId });
+    return json({ deleted: res === 1 ? true : false });
+  }
 
   // return json(res);
-  return redirect("/events");
+  // return redirect("/events");
   // return "yo";
 }
 
 export default function EventsPage() {
-  const eventsList = useLoaderData<typeof loader>();
+  const eventsList = useLoaderData() as unknown as Event[];
   const setNewEventModal = useSetAtom(addEventAtom);
   const setPromotEventModal = useSetAtom(promoteEventAtom);
   const setAttendeesModal = useSetAtom(attendeesAtom);
@@ -99,6 +128,8 @@ export default function EventsPage() {
   // try optimistic ui for the checkbox in modals when the ui does not update
   // or check if maybe you can not render the modal when there is no data maybe that is causing the issue
   // https://reactrouter.com/en/main/hooks/use-fetchers#usefetchers
+
+  // in case nothing works try to change the component with `selectbutton` component from primeReact library
 
   return (
     <main className="flex flex-col p-4">
@@ -126,23 +157,22 @@ export default function EventsPage() {
           <p className="p-4">No Events yet</p>
         ) : (
           eventsList.map((event) => (
-            <div className="flex h-40 divide-x rounded-sm border-2 border-solid" key={event.id}>
+            <div className="relative flex h-40 divide-x rounded-sm border-2 border-solid" key={event.id}>
               <div className="flex-grow">
                 <img className="h-full" src={noImage} alt="event" />
+                {event?.draft ? (
+                  <span className="absolute bottom-0 -left-1 rounded-sm border-l-4 border-l-blue-400 bg-blue-100 px-5 py-[3px] text-blue-900">
+                    Draft
+                  </span>
+                ) : null}
               </div>
+
               <div className="flex flex-grow-3 flex-col">
                 <div className="flex flex-grow-3 flex-col gap-1 pl-2 pt-1">
                   <h2>{event.name}</h2>
                   <div className="flex items-center gap-2">
                     <ClockIcon className=" h-5 w-5 stroke-violet-500" />
-                    <p>
-                      {new Date(event.startDate).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
+                    <p>{IntlDateTimeFormat.format(new Date(event.startDate))}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPinIcon className=" h-5 w-5 stroke-violet-500" />
@@ -155,10 +185,10 @@ export default function EventsPage() {
                     to={`${event.id}`}
                   >
                     {/* 📝 {event.name} */}
-                    <EyeIcon className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform  hover:stroke-violet-600 active:translate-y-[1px]" />
+                    <EyeIcon className="eventIcon" />
                   </Link>
                   <PresentationChartLineIcon
-                    className=" h-9 w-9 cursor-pointer rounded-sm  stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
+                    className={`eventIcon ${event.draft ? "disabled" : ""}`}
                     onClick={() => {
                       setPromotEventModal(true);
                       setSelectedEvent(event);
@@ -170,7 +200,7 @@ export default function EventsPage() {
                         setAttendeesModal(true);
                         setSelectedEvent(event);
                       }}
-                      className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
+                      className={`eventIcon ${event.draft ? "disabled" : ""}`}
                     />
                     {event.registration ? (
                       <span className="-ml-3 flex h-4 w-4 items-center justify-center rounded-[50%] bg-red-400 text-sm text-white">
@@ -183,15 +213,21 @@ export default function EventsPage() {
                       setTicketSalesModal(true);
                       setSelectedEvent(event);
                     }}
-                    className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
+                    className={`eventIcon ${event.draft ? "disabled" : ""} `}
                   />
-                  <PencilIcon className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] " />
+                  <PencilIcon
+                    className="eventIcon"
+                    onClick={() => {
+                      handleNewEventModal();
+                      setSelectedEvent(event);
+                    }}
+                  />
                   <TrashIcon
                     onClick={() => {
                       setDeleteModal(true);
                       setSelectedEvent(event);
                     }}
-                    className="h-9 w-9 cursor-pointer rounded-sm stroke-violet-500 p-2 transition-transform hover:stroke-violet-600 active:translate-y-[1px] "
+                    className="eventIcon"
                   />
                 </div>
               </div>
