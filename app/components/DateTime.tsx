@@ -8,6 +8,19 @@ type Props = {
   error?: boolean;
   defaultValue: Event["endDate"];
 };
+
+const intlTime = new Intl.DateTimeFormat("en-GB", {
+  timeStyle: "short",
+});
+
+const formatDate = (date: Date) => {
+  // const date = new Date(milliseconds);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+};
+
 export const DateTime = ({ label, name, error, defaultValue }: Props) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -19,9 +32,12 @@ export const DateTime = ({ label, name, error, defaultValue }: Props) => {
     setTime(e.target.value);
   };
 
-  const defaultValues = defaultValue?.split(" ");
+  const fullDate = new Date(Number(defaultValue));
 
-  const value = date || time ? `${date} ${time}` : defaultValues ? `${defaultValues?.[0]} ${defaultValues?.[1]}` : "";
+  const defaultTime = defaultValue ? intlTime.format(fullDate) : "";
+  const defaultDate = defaultValue ? formatDate(fullDate) : "";
+
+  const value = new Date(`${date ? date : defaultDate} ${time ? time : defaultTime}`).getTime();
 
   return (
     <div>
@@ -34,11 +50,11 @@ export const DateTime = ({ label, name, error, defaultValue }: Props) => {
           type="date"
           id="startDate"
           onChange={handleDate}
-          defaultValue={defaultValues?.[0]}
+          defaultValue={defaultDate}
         />
         <div className="h-5 w-[1px] bg-black" />
-        <input type="time" onChange={handleTime} defaultValue={defaultValues?.[1]} />
-        <input type="hidden" name={name} value={value ?? ""} />
+        <input type="time" onChange={handleTime} defaultValue={defaultTime} />
+        <input type="hidden" name={name} value={value || ""} />
       </div>
     </div>
   );

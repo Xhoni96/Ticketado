@@ -1,8 +1,8 @@
 import { ModalBase } from "../base/BaseModal";
-import { addEventAtom, editVenueAtom, selectedEventAtom, selectedVenueAtom } from "~/atoms/atom";
+import { addEventAtom, editVenueAtom, selectedEventAtom, selectedVenueAtom, vmtWidgetAtom } from "~/atoms/atom";
 import { Autocomplete } from "../Autocomplete";
 import noImage from "../../assets/no-image.png";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import type { Event, Venue } from "~/types";
 import { useEffect, useState } from "react";
 import { DateTime } from "../DateTime";
@@ -11,19 +11,21 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { EditVenue } from "./EditVenue";
 
 export const AddEvent = () => {
-  const [selectedEventId, setSelectedEventId] = useState<string>();
+  // const [selectedEventId, setSelectedEventId] = useState<string>();
+  const [selectedEvent, setSelectedEvent] = useState<Event>();
   const [venue, setVenue] = useState<Venue | null>(null);
   const [endTime, setEndtime] = useState(false);
   const setEditModal = useSetAtom(editVenueAtom);
   const setSelectedVenueModal = useSetAtom(selectedVenueAtom);
   const setNewEventModal = useSetAtom(addEventAtom);
   const defaultData = useAtomValue(selectedEventAtom);
+  const setVmtWidget = useSetAtom(vmtWidgetAtom);
 
-  const loaderData = useLoaderData() as unknown as Event[];
   const actionData = useActionData();
 
   const handleSelectedEvent = (event: Event) => {
-    setSelectedEventId(event.id);
+    // setSelectedEventId(event.id);
+    setSelectedEvent(event);
 
     if (event.venue) {
       setVenue(event.venue);
@@ -35,6 +37,7 @@ export const AddEvent = () => {
   };
 
   const handleEndtime = () => {
+    if (defaultData?.endDate) return;
     setEndtime(!endTime);
   };
 
@@ -44,17 +47,37 @@ export const AddEvent = () => {
   };
 
   const handleOnClose = () => {
-    setSelectedEventId("");
+    // setSelectedEventId("");
+    setSelectedEvent(undefined);
     setVenue(null);
   };
 
-  const selectedEvent = loaderData.find((event) => event.id === selectedEventId);
+  const handleVmtWidget = () => {
+    const event = selectedEvent || defaultData;
+    if (event && selectedVenue) {
+      setVmtWidget({
+        apiUrl: "https://vmt-staging.softjourn.if.ua/api",
+        frontPoint: "https://vmt-staging.softjourn.if.ua/front",
+        localization: "en",
+        eventId: event.id,
+        memberId: "1111",
+        mode: "inventory",
+        // venueId: selectedVenue.id,
+        venueId: "11",
+        token:
+          " NzgwZGI0M2UtYzFlMC0xMWVkLTgxOGItYTNkNDk1MDE1ZmVkLjExMTEuaW52ZW50b3J5Li4uLmZhbHNl.673342a942a780b59b51041fea452bbab1aa8126df0785bc919002ba54cd261b",
+      });
+    }
+  };
+
+  // const selectedEvent = loaderData.find((event) => event.id === selectedEventId);
   const selectedVenue = venue ? venue : selectedEvent?.venue ?? defaultData?.venue;
 
   useEffect(() => {
     // event saved sucessfully
     if (actionData?.id) {
       setNewEventModal(false);
+      handleOnClose();
     }
   }, [actionData, setNewEventModal]);
 
@@ -91,8 +114,8 @@ export const AddEvent = () => {
                 <span className="block h-3 text-sm text-red-700">{actionData?.errors?.startDate}</span>
               </div>
 
-              {endTime ? <div className="h-full w-[1px] bg-gray-400" /> : null}
-              {endTime ? (
+              {endTime || defaultData?.endDate ? <div className="h-full w-[1px] bg-gray-400" /> : null}
+              {endTime || defaultData?.endDate ? (
                 <div className="flex">
                   <DateTime label="End time" name="endDate" defaultValue={defaultData?.endDate} />
                   <XMarkIcon className="h-5 w-5 cursor-pointer stroke-violet-500" onClick={handleEndtime} />
@@ -124,7 +147,7 @@ export const AddEvent = () => {
               </button>
             ) : null}
           </div>
-          <button type="button" className="self-start rounded-md bg-gray-200 py-1 px-4">
+          <button type="button" className="self-start rounded-md bg-gray-200 py-1 px-4" onClick={handleVmtWidget}>
             Inventory Managment
           </button>
           <textarea
@@ -156,7 +179,7 @@ export const AddEvent = () => {
         <input type="hidden" name="eventId" value={defaultData?.id ?? ""} />
       </Form>
 
-      <EditVenue onSubmit={handleSelectedVenue} />
+      <EditVenue onSubmit={handleSelectedVenue} eventId={selectedEvent?.id ?? defaultData?.id} />
     </ModalBase>
   );
 };

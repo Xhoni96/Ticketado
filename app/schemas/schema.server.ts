@@ -53,3 +53,8 @@ export const createEventSchema = z
   .required({ name: true, startDate: true, venue: true });
 
 // export type Venue = z.infer<typeof venueSchema> & { id: string };
+
+export const BestAvailableSchema = z.object({
+  quantity: z.string().min(1, { message: "Please provide a quantity" }),
+  id: z.string().startsWith("vendor", { message: "Please select a Ticket Type" }),
+});

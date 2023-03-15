@@ -64,7 +64,7 @@ async function seed() {
       e.insert(e.Event, {
         name: "My first event",
         description: "Hello, world!",
-        startDate: new Date().toLocaleDateString(),
+        startDate: String(new Date().getTime()),
         published: false,
         onSale: false,
         draft: false,
@@ -77,7 +77,7 @@ async function seed() {
       e.insert(e.Event, {
         name: "My second event",
         description: "Hello, world!",
-        startDate: new Date().toLocaleDateString(),
+        startDate: String(new Date().getTime() + 99999999),
         published: false,
         onSale: false,
         draft: false,
@@ -90,7 +90,7 @@ async function seed() {
       e.insert(e.Event, {
         name: "My third event",
         description: "Hello, world!",
-        startDate: new Date().toLocaleDateString(),
+        startDate: String(new Date().getTime()),
         published: false,
         onSale: false,
         draft: true,

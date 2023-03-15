@@ -1,6 +1,6 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, NavLink, Outlet, useCatch, useLoaderData, useSearchParams } from "@remix-run/react";
 import noImage from "../assets/no-image.png";
 import {
   ClockIcon,
@@ -34,8 +34,11 @@ import { IntlDateTimeFormat } from "~/utils/utils";
 
 export async function loader({ request }: LoaderArgs) {
   // const form = await request.formData();
+  const url = new URL(request.url);
+  const query = url.searchParams.get("q");
+
   const userId = await requireUserId(request);
-  const eventsList = await getEvents({ userId });
+  const eventsList = await getEvents({ userId, query });
 
   return json(eventsList);
 }
@@ -43,7 +46,6 @@ export async function loader({ request }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   const userId = await requireUserId(request);
 
-  console.log("yooo");
   const formData = await request.formData();
   const { _action, ...values } = Object.fromEntries(formData);
 
@@ -55,6 +57,7 @@ export async function action({ request, params }: ActionArgs) {
       draft: _action === "draftEvent" ? true : false,
       venue: values.venue ? JSON.parse(values.venue as string) : null,
     };
+
     const venueId = event.venue?.id;
 
     const zodSafeParse = createEventSchema.safeParse(event);
@@ -131,12 +134,19 @@ export default function EventsPage() {
 
   // in case nothing works try to change the component with `selectbutton` component from primeReact library
 
+  const [searchParams] = useSearchParams();
+  const currentQuery = searchParams.get("q");
+
   return (
     <main className="flex flex-col p-4">
       <div className="flex justify-between p-3">
         <div className="flex gap-4">
-          <div>Current Events</div>
-          <div>Past Events</div>
+          <NavLink to="?q=current" className={`${currentQuery === "current" ? "bg-blue-200" : ""} btn-blue`}>
+            Current Events
+          </NavLink>
+          <NavLink to="?q=past" className={`${currentQuery === "past" ? "bg-blue-200" : ""} btn-blue`}>
+            Past Events
+          </NavLink>
         </div>
         <button
           onClick={handleNewEventModal}
@@ -167,12 +177,12 @@ export default function EventsPage() {
                 ) : null}
               </div>
 
-              <div className="flex flex-grow-3 flex-col">
+              <div className="flex flex-grow-3 flex-col text-gray-700">
                 <div className="flex flex-grow-3 flex-col gap-1 pl-2 pt-1">
                   <h2>{event.name}</h2>
                   <div className="flex items-center gap-2">
                     <ClockIcon className=" h-5 w-5 stroke-violet-500" />
-                    <p>{IntlDateTimeFormat.format(new Date(event.startDate))}</p>
+                    <p>{IntlDateTimeFormat.format(new Date(Number(event.startDate)))}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPinIcon className=" h-5 w-5 stroke-violet-500" />
@@ -180,11 +190,7 @@ export default function EventsPage() {
                   </div>
                 </div>
                 <div className="flex flex-grow items-center justify-end gap-4 bg-gray-100  pr-3">
-                  <Link
-                    // className="block border-b p-4 text-xl"
-                    to={`${event.id}`}
-                  >
-                    {/* 📝 {event.name} */}
+                  <Link to={`${event.id}`}>
                     <EyeIcon className="eventIcon" />
                   </Link>
                   <PresentationChartLineIcon
@@ -238,4 +244,20 @@ export default function EventsPage() {
       </div>
     </main>
   );
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+
+  return <div>An unexpected error occurred: {error.message}</div>;
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 404) {
+    return <div>Event not found</div>;
+  }
+
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }

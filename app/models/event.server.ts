@@ -31,7 +31,17 @@ export async function getEvent(params: { id: string; userId: string }) {
   return event.run(client);
 }
 
-export async function getEvents(params: { userId: string }) {
+export async function getEvents(params: { userId: string; query: string | null }) {
+  const currentDate = new Date().getTime();
+
+  const compareDates = (startDate: any) => {
+    const query = params.query ? params.query : "current";
+
+    return query === "current"
+      ? e.op(e.to_int64(startDate), ">", currentDate)
+      : e.op(e.to_int64(startDate), "<", currentDate);
+  };
+
   const events = await e
     .select(e.Event, (event) => ({
       ...e.Event["*"],
@@ -39,7 +49,7 @@ export async function getEvents(params: { userId: string }) {
         ...e.Venue["*"],
       },
       order_by: { expression: event.createdAt, direction: e.DESC },
-      filter: e.op(event.user, "=", UserQuery(params.userId)),
+      filter: e.op(e.op(event.user, "=", UserQuery(params.userId)), "and", compareDates(event.startDate)),
     }))
     .run(client);
 
