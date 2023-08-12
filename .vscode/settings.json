@@ -1,0 +1,6 @@
+{
+  "yaml.schemas": {
+    "file:///Users/johnn/.vscode/extensions/atlassian.atlascode-3.0.0/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
+    "https://json.schemastore.org/github-workflow.json": "file:///Users/johnn/Documents/SideProjects/Ticketado%28Tamtoto%29%20Remix/.github/workflows/deploy.yml"
+  }
+}
