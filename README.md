@@ -4,14 +4,14 @@ Ticketing manager app built with Remix.run.
 
 ## What's in the stack
 
-Web Framework: Remix.run
-Database: EdgeDB
-State Manager: Jotai
-Styling: TailwindCss
-Component library: Headless UI
-Schema Validation: Zod
+- Web Framework: Remix.run
+- Database: EdgeDB
+- State Manager: Jotai
+- Styling: TailwindCss
+- Component library: Headless UI
+- Schema Validation: Zod
 
-How to run the project locally:
+## Development:
 
 Node & npm versions are defined in package.json under `volta`.
 If you use volta as your tool manager then no need to do anything.
@@ -23,7 +23,7 @@ If you use volta as your tool manager then no need to do anything.
 5. Run `npm run generate_edgedb_types` to generate typescript types from the db schema
 6. Run `npm run dev`.
 
-Login credentials
+## Login credentials
 
 email: root@remix.run
 password: remix+edgedb=awesome
