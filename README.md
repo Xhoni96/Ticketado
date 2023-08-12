@@ -1,4 +1,5 @@
-[Ticketado]
+# Ticketado
+
 Ticketing manager app built with Remix.run.
 
 ## What's in the stack
