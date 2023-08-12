@@ -25,5 +25,5 @@ If you use [volta](https://volta.sh/) (Highly recommended) as your tool manager 
 
 ## Login credentials
 
-email: root@remix.run
-password: remix+edgedb=awesome
+- email: root@remix.run
+- password: remix+edgedb=awesome
