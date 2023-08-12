@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        lightBlue: "#5BC0F8",
+        sky: "#5BC0F8",
         // transparent: "transparent",
         // current: "currentColor",
         // white: "#ffffff",
