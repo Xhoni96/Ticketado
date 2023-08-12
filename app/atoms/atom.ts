@@ -19,17 +19,3 @@ export const editVenueAtom = atom(false);
 export const selectedVenueAtom = atom<Venue | null | undefined>(null);
 
 export const selectedEventAtom = atom<Event | undefined>(undefined);
-
-export const vmtWidgetAtom = atom<VmtWidget | undefined>(undefined);
-
-type VmtWidget = {
-  apiUrl: string;
-  frontPoint: string;
-  localization: string;
-  eventId: string;
-  memberId: string;
-  mode: string;
-  venueId?: string;
-  token: string;
-  appViewOnly?: boolean;
-};

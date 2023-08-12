@@ -1,4 +1,4 @@
-import { editVenueAtom, selectedVenueAtom, vmtWidgetAtom } from "~/atoms/atom";
+import { editVenueAtom, selectedVenueAtom } from "~/atoms/atom";
 import { ModalBase } from "../base/BaseModal";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
@@ -13,7 +13,6 @@ export const EditVenue = (props: Props) => {
   const [errors, setErrors] = useState({ name: "" });
   const selectedVenue = useAtomValue(selectedVenueAtom);
   const setEditModal = useSetAtom(editVenueAtom);
-  const setVmtWidget = useSetAtom(vmtWidgetAtom);
 
   if (!selectedVenue) return null;
 
@@ -29,23 +28,6 @@ export const EditVenue = (props: Props) => {
 
       props.onSubmit(data);
       setEditModal(false);
-    }
-  };
-
-  const handleVmtWidget = () => {
-    if (props.eventId) {
-      setVmtWidget({
-        apiUrl: "https://vmt-staging.softjourn.if.ua/api",
-        frontPoint: "https://vmt-staging.softjourn.if.ua/front",
-        localization: "en",
-        eventId: props.eventId,
-        memberId: "1111",
-        mode: "edit",
-        // venueId: selectedVenue.id,
-        venueId: "11",
-        token:
-          "NzgwZGI0M2UtYzFlMC0xMWVkLTgxOGItYTNkNDk1MDE1ZmVkLjExMTEuaW52ZW50b3J5Li4uLmZhbHNl.673342a942a780b59b51041fea452bbab1aa8126df0785bc919002ba54cd261b",
-      });
     }
   };
 
@@ -97,12 +79,6 @@ export const EditVenue = (props: Props) => {
             defaultValue={selectedVenue.number ?? ""}
           />
         </div>
-        <div>
-          <h1>MAP</h1>
-        </div>
-        <button type="button" onClick={handleVmtWidget} className="btn-violet self-start py-1">
-          Venue Designer
-        </button>
         <div className="mt-2 h-[2px] w-full border" />
         <button className="btn-blue self-end">Save</button>
       </form>

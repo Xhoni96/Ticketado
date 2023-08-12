@@ -1,5 +1,5 @@
 import { ModalBase } from "../base/BaseModal";
-import { addEventAtom, editVenueAtom, selectedEventAtom, selectedVenueAtom, vmtWidgetAtom } from "~/atoms/atom";
+import { addEventAtom, editVenueAtom, selectedEventAtom, selectedVenueAtom } from "~/atoms/atom";
 import { Autocomplete } from "../Autocomplete";
 import noImage from "../../assets/no-image.png";
 import { Form, useActionData } from "@remix-run/react";
@@ -19,7 +19,6 @@ export const AddEvent = () => {
   const setSelectedVenueModal = useSetAtom(selectedVenueAtom);
   const setNewEventModal = useSetAtom(addEventAtom);
   const defaultData = useAtomValue(selectedEventAtom);
-  const setVmtWidget = useSetAtom(vmtWidgetAtom);
 
   const actionData = useActionData();
 
@@ -50,24 +49,6 @@ export const AddEvent = () => {
     // setSelectedEventId("");
     setSelectedEvent(undefined);
     setVenue(null);
-  };
-
-  const handleVmtWidget = () => {
-    const event = selectedEvent || defaultData;
-    if (event && selectedVenue) {
-      setVmtWidget({
-        apiUrl: "https://vmt-staging.softjourn.if.ua/api",
-        frontPoint: "https://vmt-staging.softjourn.if.ua/front",
-        localization: "en",
-        eventId: event.id,
-        memberId: "1111",
-        mode: "inventory",
-        // venueId: selectedVenue.id,
-        venueId: "11",
-        token:
-          " NzgwZGI0M2UtYzFlMC0xMWVkLTgxOGItYTNkNDk1MDE1ZmVkLjExMTEuaW52ZW50b3J5Li4uLmZhbHNl.673342a942a780b59b51041fea452bbab1aa8126df0785bc919002ba54cd261b",
-      });
-    }
   };
 
   // const selectedEvent = loaderData.find((event) => event.id === selectedEventId);
@@ -147,9 +128,7 @@ export const AddEvent = () => {
               </button>
             ) : null}
           </div>
-          <button type="button" className="self-start rounded-md bg-gray-200 py-1 px-4" onClick={handleVmtWidget}>
-            Inventory Managment
-          </button>
+
           <textarea
             name="description"
             placeholder="Description"

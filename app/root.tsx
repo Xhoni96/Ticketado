@@ -9,7 +9,6 @@ import { verifyLogin } from "./models/user.server";
 import { Navbar } from "./components/Navbar";
 import { loginSchema } from "./schemas/schema.server";
 import { zodErrorsToObj } from "./utils/utils.server";
-import { WidgetContainer } from "./components/VmtWidget/WidgetContainer";
 import { Suspense } from "react";
 
 export const links: LinksFunction = () => {
@@ -70,10 +69,6 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
-        <Suspense fallback={<div>Loadinggg</div>}>
-          <script src="/bundle.js" />
-          <WidgetContainer />
-        </Suspense>
       </body>
     </html>
   );
