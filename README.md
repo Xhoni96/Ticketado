@@ -1,12 +1,12 @@
 # Ticketado
 
-Ticketing manager app built with [Remix.run](https://remix.run/).
+Ticketing Management app.
 
 ## What's in the stack
 
-- Web Framework: [Remix.run](https://remix.run/)
+- Build with [Remix.run](https://remix.run/)
 - Database with [EdgeDB](https://www.edgedb.com/)
-- State management with: [Jotai](https://jotai.org/)
+- State management with [Jotai](https://jotai.org/)
 - Styling with [Tailwind](https://tailwindcss.com/)
 - UI Components with [Headless UI](https://headlessui.com/)
 - Schema validation with [Zod](https://zod.dev/)
