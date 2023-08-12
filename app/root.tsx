@@ -9,7 +9,6 @@ import { verifyLogin } from "./models/user.server";
 import { Navbar } from "./components/Navbar";
 import { loginSchema } from "./schemas/schema.server";
 import { zodErrorsToObj } from "./utils/utils.server";
-import { Suspense } from "react";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesheet }];

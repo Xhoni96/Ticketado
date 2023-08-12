@@ -54,9 +54,5 @@ jobs:
         with:
           useLockFile: false
 
-      - name: Generate edgeql-js
-        run: npm run generate_edgeql
-
-      - name: 🔎 Type check  
+      - name: 🔎 Type check
         run: npm run typecheck --if-present
-  
