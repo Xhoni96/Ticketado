@@ -1,6 +1,6 @@
 # Ticketado
 
-Ticketing Management app.
+A Ticketing Management app.
 
 ## What's in the stack
 
