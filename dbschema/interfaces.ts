@@ -85,7 +85,6 @@ export interface Venue extends std.$Object {
   "number"?: string | null;
   "region"?: string | null;
   "street"?: string | null;
-  "vmt_id"?: string | null;
   "zip"?: string | null;
   "address"?: string | null;
   "name": string;
@@ -218,8 +217,8 @@ export namespace schema {
   export interface ObjectType extends InheritingObject, ConsistencySubject, AnnotationSubject, Type, Source {
     "union_of": ObjectType[];
     "intersection_of": ObjectType[];
-    "links": Link[];
     "properties": Property[];
+    "links": Link[];
     "access_policies": AccessPolicy[];
     "compound_type": boolean;
     "is_compound_type": boolean;

@@ -11,9 +11,7 @@ export const Navbar = () => {
   return (
     <nav className="flex items-center justify-between rounded-md bg-gray-100 px-8 py-4">
       <div className="flex gap-10">
-        <Link to="/">
-          <img src="https://ticketing-staging.softjourn.if.ua/img/logo.png" alt="ticketing-logo" />
-        </Link>
+        <Link to="/">Home</Link>
 
         <div>
           <NavLink to="events?q=current" className="peer">
