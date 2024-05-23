@@ -59,8 +59,6 @@ module default {
     #  property parentid -> str;
     property region -> str;
     property street -> str;
-    #  property vmtHost -> str; "https://vmt-staging.softjourn.if.ua/front"
-    property vmt_id -> str; # check what is needed for. Maybe needs to be deleted
     property zip -> str;
 
     # link password := .<user[is Password];
