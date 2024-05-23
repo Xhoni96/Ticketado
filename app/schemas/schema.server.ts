@@ -19,8 +19,7 @@ export const venueSchema = z
     street: z.nullable(z.string({ invalid_type_error: "Street must be a string" })),
     zip: z.nullable(z.string({ invalid_type_error: "Zip must be a string" })),
 
-    //   address: z.nullable(z.string({ invalid_type_error: "address must be a string" })),
-    //   vmt_id: z.nullable(z.string({ invalid_type_error: "vmt_id must be a string" })),
+    //   address: z.nullable(z.string({ invalid_type_error: "address must be a string" }))
   })
   .partial()
   .required({
