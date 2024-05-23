@@ -17,8 +17,6 @@ const VenuesIndexPage = () => {
 
   return (
     <div>
-      <p>yooo this is a list of venues</p>
-
       {venuesList.map((venue) => (
         <div key={venue.id}>
           <h3>{venue.name}</h3>
